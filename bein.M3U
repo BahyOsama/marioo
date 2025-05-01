@@ -1,0 +1,47 @@
+#EXTM3U
+#EXTINF:0, beIN 4HD 
+http://178.33.88.129:888/udp/239.102.0.5:1234
+#EXTINF:0, beIN 7HD 
+http://178.33.88.129:888/udp/239.102.0.8:1234
+#EXTINF:0, beIN 8HD 
+http://178.33.88.129:888/udp/239.102.0.9:1234
+#EXTINF:0, beIN 10HD 
+http://178.33.88.129:888/udp/239.102.0.11:1234
+#EXTINF:0, beIN 11HD 
+http://178.33.88.129:888/udp/239.102.0.12:1234
+#EXTINF:0, beIN 3 HD 
+http://178.33.88.129:888/udp/239.102.0.17:1234
+#EXTINF:0, beIN Sports 
+http://178.33.88.129:888/udp/239.102.0.19:1234
+#EXTINF:0, beIN 1 HD 
+http://178.33.88.129:888/udp/239.102.0.20:1234
+
+#EXTINF:0,FOX SPORTS 1 
+http://4.31.30.159:9110 
+#EXTINF:0,FOX SPORTS 2 
+http://4.31.30.159:9111
+
+#EXTINF:0,PT: EUROSPORT 2
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1759.ts
+#EXTINF:0,PT: EUROSPORT 1
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1758.ts
+#EXTINF:0,PT: E!ENTERTAINMENT
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1778.ts
+#EXTINF:0,PT: DISCOVERY HD SHOWCASE
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1780.ts
+#EXTINF:0,PT: DISCOVERY CHANNEL
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1779.ts
+#EXTINF:0,PT: BENFICA TV 2
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1752.ts
+#EXTINF:0,PT: BENFICA TV 1 HD
+http://iptv4.is-certified
+.com:8000/live/vincenzo/vincenzo/1751.ts
+#EXTINF:0,PT: Sport TV 4
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1712.ts
+#EXTINF:0,PT: Sport TV 3
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1713.ts
+#EXTINF:0,PT: Sport TV 2
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1714.ts
+#EXTINF:0,PT: Sport Tv 1 HD
+http://iptv4.is-certified.com:8000/live/vincenzo/vincenzo/1715.ts
+
