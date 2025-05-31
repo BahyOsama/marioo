@@ -1,0 +1,2394 @@
+import 'dart:async';
+import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => TournamentProvider()),
+        ChangeNotifierProvider(create: (_) => CouponProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
+        ChangeNotifierProvider(create: (_) => GameProvider()),
+      ],
+      child: const JackarooKingApp(),
+    ),
+  );
+}
+
+class JackarooKingApp extends StatelessWidget {
+  const JackarooKingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final languageProvider = Provider.of<LanguageProvider>(context);
+
+    return MaterialApp(
+      title: 'جاكارو كينج',
+      debugShowCheckedModeBanner: false,
+      theme: themeProvider.lightTheme,
+      darkTheme: themeProvider.darkTheme,
+      themeMode: themeProvider.themeMode,
+      locale: languageProvider.locale,
+      supportedLocales: const [Locale('ar', ''), Locale('en', '')],
+      localizationsDelegates: const [
+        AppLocalizationsDelegate(),
+      ],
+      home: const MainNavigationScreen(),
+    );
+  }
+}
+
+// App Localization
+class AppLocalizations {
+  static Map<String, Map<String, String>> _localizedValues = {
+    'en': {
+      'title': 'Jackaroo King',
+      'home': 'Home',
+      'profile': 'Profile',
+      'game': 'Game',
+      'tournaments': 'Tournaments',
+      'live_tournaments': 'Live Tournaments',
+      'events': 'Events',
+      'wallet': 'Wallet',
+      'balance': 'Balance',
+      'play': 'Play',
+      'settings': 'Settings',
+      'language': 'Language',
+      'theme': 'Theme',
+      'statistics': 'Statistics',
+      'win_ratio': 'Win Ratio',
+      'global_rank': 'Global Rank',
+      'prizes': 'Prizes',
+      'customize': 'Customize',
+      'background': 'Background',
+      'frames': 'Frames',
+      'notifications': 'Notifications',
+      'admin_panel': 'Admin Panel',
+      'create_tournament': 'Create Tournament',
+      'coupons': 'Coupons',
+      'analytics': 'Analytics',
+      'matchmaking': 'Matchmaking',
+      'security': 'Security',
+      'arabic': 'Arabic',
+      'english': 'English',
+      'light': 'Light',
+      'dark': 'Dark',
+      'system': 'System',
+      'logout': 'Logout',
+      'join': 'Join',
+      'players': 'Players',
+      'starts_in': 'Starts in',
+      'tournament_created': 'Tournament created',
+      'generate_coupon': 'Generate Coupon',
+      'coupon_code': 'Coupon Code',
+      'value': 'Value',
+      'condition': 'Condition',
+      'generate': 'Generate',
+      'active_coupons': 'Active Coupons',
+      'expiry': 'Expiry',
+      'time': 'Time',
+      'start_game': 'Start Game',
+      'you_win': 'You Win!',
+      'you_lose': 'You Lose',
+      'play_again': 'Play Again',
+      'back_to_home': 'Back to Home',
+      'add_funds': 'Add Funds',
+      'withdraw': 'Withdraw',
+      'no_active_coupons': 'No active coupons',
+      'redeem': 'Redeem',
+      'emergency_rules': 'Emergency Rules',
+      'tournament_name': 'Tournament Name',
+      'max_players': 'Max Players',
+      'start_date': 'Start Date',
+      'rounds': 'Rounds',
+      'win_condition': 'Win Condition',
+    },
+    'ar': {
+      'title': 'جاكارو كينج',
+      'home': 'الرئيسية',
+      'profile': 'الملف الشخصي',
+      'game': 'اللعبة',
+      'tournaments': 'البطولات',
+      'live_tournaments': 'البطولات الحية',
+      'events': 'الأحداث',
+      'wallet': 'المحفظة',
+      'balance': 'الرصيد',
+      'play': 'لعب',
+      'settings': 'الإعدادات',
+      'language': 'اللغة',
+      'theme': 'المظهر',
+      'statistics': 'الإحصائيات',
+      'win_ratio': 'نسبة الفوز',
+      'global_rank': 'الترتيب العالمي',
+      'prizes': 'الجوائز',
+      'customize': 'تخصيص',
+      'background': 'الخلفية',
+      'frames': 'الإطارات',
+      'notifications': 'الإشعارات',
+      'admin_panel': 'لوحة التحكم',
+      'create_tournament': 'إنشاء بطولة',
+      'coupons': 'الكوبونات',
+      'analytics': 'التحليلات',
+      'matchmaking': 'المطابقة',
+      'security': 'الأمان',
+      'arabic': 'العربية',
+      'english': 'الإنجليزية',
+      'light': 'فاتح',
+      'dark': 'داكن',
+      'system': 'النظام',
+      'logout': 'تسجيل الخروج',
+      'join': 'انضم',
+      'players': 'لاعبين',
+      'starts_in': 'يبدأ بعد',
+      'tournament_created': 'تم إنشاء البطولة',
+      'generate_coupon': 'إنشاء كوبون',
+      'coupon_code': 'كود الكوبون',
+      'value': 'القيمة',
+      'condition': 'الشرط',
+      'generate': 'إنشاء',
+      'active_coupons': 'كوبونات نشطة',
+      'expiry': 'انتهاء الصلاحية',
+      'time': 'الوقت',
+      'start_game': 'بدء اللعبة',
+      'you_win': 'لقد فزت!',
+      'you_lose': 'لقد خسرت',
+      'play_again': 'العب مرة أخرى',
+      'back_to_home': 'العودة للرئيسية',
+      'add_funds': 'إضافة رصيد',
+      'withdraw': 'سحب',
+      'no_active_coupons': 'لا توجد كوبونات نشطة',
+      'redeem': 'استبدال',
+      'emergency_rules': 'قواعد الطوارئ',
+      'tournament_name': 'اسم البطولة',
+      'max_players': 'أقصى عدد لاعبين',
+      'start_date': 'تاريخ البدء',
+      'rounds': 'الجولات',
+      'win_condition': 'شرط الفوز',
+    },
+  };
+
+  static String of(BuildContext context, String key) {
+    final locale = Localizations.localeOf(context).languageCode;
+    return _localizedValues[locale]?[key] ?? key;
+  }
+}
+
+class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+  const AppLocalizationsDelegate();
+
+  @override
+  bool isSupported(Locale locale) => ['ar', 'en'].contains(locale.languageCode);
+
+  @override
+  Future<AppLocalizations> load(Locale locale) async =>
+      SynchronousFuture<AppLocalizations>(AppLocalizations());
+
+  @override
+  bool shouldReload(AppLocalizationsDelegate old) => false;
+}
+
+// Providers
+class ThemeProvider with ChangeNotifier {
+  ThemeMode _themeMode = ThemeMode.system;
+
+  ThemeMode get themeMode => _themeMode;
+
+  set themeMode(ThemeMode mode) {
+    _themeMode = mode;
+    notifyListeners();
+  }
+
+  final lightTheme = ThemeData(
+    useMaterial3: true,
+    fontFamily: 'Tajawal',
+    colorScheme: const ColorScheme.light(
+      primary: Color(0xFF0A2E36),
+      secondary: Color(0xFFD4AF37),
+      surface: Color(0xFFF5F5F5),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF0A2E36),
+      foregroundColor: Colors.white,
+      elevation: 0,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.black87,
+      ),
+      bodyLarge: TextStyle(fontSize: 18, color: Colors.black87),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF0A2E36),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+      ),
+    ),
+  );
+
+  final darkTheme = ThemeData(
+    useMaterial3: true,
+    fontFamily: 'Tajawal',
+    colorScheme: const ColorScheme.dark(
+      primary: Color(0xFF0A2E36),
+      secondary: Color(0xFFD4AF37),
+      surface: Color(0xFF121212),
+    ),
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Color(0xFF0A2E36),
+      foregroundColor: Colors.white,
+      elevation: 0,
+    ),
+    textTheme: const TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.white,
+      ),
+      bodyLarge: TextStyle(fontSize: 18, color: Colors.white70),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFFD4AF37),
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 2,
+      ),
+    ),
+  );
+}
+
+class UserProvider with ChangeNotifier {
+  User _user = User(
+    id: 'user_001',
+    name: 'علي محمد',
+    balance: 10500,
+    wins: 42,
+    losses: 18,
+    rank: 125,
+    backgroundImage: 'assets/blue_bg.jpg',
+    frame: 'assets/gold_frame.png',
+    language: 'ar',
+    themeMode: 'system',
+  );
+
+  User get user => _user;
+
+  void updateBalance(int amount) {
+    _user = _user.copyWith(balance: _user.balance + amount);
+    notifyListeners();
+  }
+
+  void updateProfile(String name, String background, String frame) {
+    _user = _user.copyWith(
+      name: name,
+      backgroundImage: background,
+      frame: frame,
+    );
+    notifyListeners();
+  }
+
+  void updateSettings(String language, String themeMode) {
+    _user = _user.copyWith(language: language, themeMode: themeMode);
+    notifyListeners();
+  }
+}
+
+class TournamentProvider with ChangeNotifier {
+  List<Tournament> _tournaments = [
+    Tournament(
+      id: 't1',
+      name: 'بطولة الذهب',
+      prize: 5000,
+      players: 32,
+      maxPlayers: 64,
+      startTime: DateTime.now().add(const Duration(hours: 2)),
+      rules: TournamentRules(
+        rounds: 5,
+        winCondition: 152,
+        emergencyRules: 'إلغاء البطولة عند اكتشاف الغش',
+      ),
+    ),
+    Tournament(
+      id: 't2',
+      name: 'كأس الماس',
+      prize: 10000,
+      players: 18,
+      maxPlayers: 32,
+      startTime: DateTime.now().add(const Duration(days: 1)),
+      rules: TournamentRules(
+        rounds: 3,
+        winCondition: 100,
+        emergencyRules: 'إيقاف اللاعبين المخالفين',
+      ),
+    ),
+  ];
+
+  List<Tournament> get tournaments => _tournaments;
+
+  void createTournament(Tournament tournament) {
+    _tournaments.add(tournament);
+    notifyListeners();
+  }
+
+  void joinTournament(String tournamentId) {
+    final index = _tournaments.indexWhere((t) => t.id == tournamentId);
+    if (index != -1) {
+      final tournament = _tournaments[index];
+      if (tournament.players < tournament.maxPlayers) {
+        _tournaments[index] = tournament.copyWith(
+          players: tournament.players + 1,
+        );
+        notifyListeners();
+      }
+    }
+  }
+}
+
+class CouponProvider with ChangeNotifier {
+  List<Coupon> _coupons = [
+    Coupon(
+      id: 'c1',
+      code: 'RAMADAN2023',
+      value: 500,
+      expiry: DateTime(2023, 12, 31),
+      condition: 'الانضمام إلى 3 بطولات',
+      isUsed: false,
+    ),
+    Coupon(
+      id: 'c2',
+      code: 'WELCOME100',
+      value: 1000,
+      expiry: DateTime.now().add(const Duration(days: 1)),
+      condition: 'لا يوجد',
+      isUsed: true,
+    ),
+  ];
+
+  List<Coupon> get coupons => _coupons.where((c) => !c.isUsed).toList();
+
+  void generateCoupon(
+    String code,
+    int value,
+    Duration expiry,
+    String condition,
+  ) {
+    _coupons.add(
+      Coupon(
+        id: 'c${_coupons.length + 1}',
+        code: code,
+        value: value,
+        expiry: DateTime.now().add(expiry),
+        condition: condition,
+        isUsed: false,
+      ),
+    );
+    notifyListeners();
+  }
+
+  void redeemCoupon(String couponId) {
+    final index = _coupons.indexWhere((c) => c.id == couponId);
+    if (index != -1) {
+      _coupons[index] = _coupons[index].copyWith(isUsed: true);
+      Provider.of<UserProvider>(
+        navigatorKey.currentContext!,
+        listen: false,
+      ).updateBalance(_coupons[index].value);
+      notifyListeners();
+    }
+  }
+}
+
+class LanguageProvider with ChangeNotifier {
+  Locale _locale = const Locale('ar', '');
+
+  Locale get locale => _locale;
+
+  void setLocale(Locale locale) {
+    _locale = locale;
+    notifyListeners();
+  }
+}
+
+class GameProvider with ChangeNotifier {
+  GameState _gameState = GameState(
+    status: GameStatus.lobby,
+    score: 0,
+    opponentScore: 0,
+    timeLeft: 0,
+  );
+
+  GameState get gameState => _gameState;
+
+  void startGame() {
+    _gameState = GameState(
+      status: GameStatus.playing,
+      score: 0,
+      opponentScore: 0,
+      timeLeft: 180,
+    );
+    notifyListeners();
+
+    _startTimer();
+  }
+
+  void _startTimer() {
+    const oneSec = Duration(seconds: 1);
+    Timer.periodic(oneSec, (timer) {
+      if (_gameState.timeLeft <= 0) {
+        timer.cancel();
+        _endGame();
+        return;
+      }
+
+      if (_gameState.status == GameStatus.playing) {
+        _gameState = _gameState.copyWith(timeLeft: _gameState.timeLeft - 1);
+        notifyListeners();
+      } else {
+        timer.cancel();
+      }
+    });
+  }
+
+  void updateScore(int points) {
+    _gameState = _gameState.copyWith(score: _gameState.score + points);
+    notifyListeners();
+
+    if (_gameState.score >= 152) {
+      _endGame(isWin: true);
+    }
+  }
+
+  void _endGame({bool isWin = false}) {
+    _gameState = _gameState.copyWith(
+      status: isWin ? GameStatus.won : GameStatus.lost,
+    );
+    notifyListeners();
+
+    if (isWin) {
+      Provider.of<UserProvider>(
+        navigatorKey.currentContext!,
+        listen: false,
+      ).updateBalance(500);
+    }
+  }
+}
+
+// Models
+class User {
+  final String id;
+  final String name;
+  final int balance;
+  final int wins;
+  final int losses;
+  final int rank;
+  final String backgroundImage;
+  final String frame;
+  final String language;
+  final String themeMode;
+
+  User({
+    required this.id,
+    required this.name,
+    required this.balance,
+    required this.wins,
+    required this.losses,
+    required this.rank,
+    required this.backgroundImage,
+    required this.frame,
+    required this.language,
+    required this.themeMode,
+  });
+
+  User copyWith({
+    String? name,
+    int? balance,
+    int? wins,
+    int? losses,
+    int? rank,
+    String? backgroundImage,
+    String? frame,
+    String? language,
+    String? themeMode,
+  }) {
+    return User(
+      id: id,
+      name: name ?? this.name,
+      balance: balance ?? this.balance,
+      wins: wins ?? this.wins,
+      losses: losses ?? this.losses,
+      rank: rank ?? this.rank,
+      backgroundImage: backgroundImage ?? this.backgroundImage,
+      frame: frame ?? this.frame,
+      language: language ?? this.language,
+      themeMode: themeMode ?? this.themeMode,
+    );
+  }
+
+  double get winRatio => wins / (wins + losses);
+}
+
+class Tournament {
+  final String id;
+  final String name;
+  final int prize;
+  final int players;
+  final int maxPlayers;
+  final DateTime startTime;
+  final TournamentRules rules;
+
+  Tournament({
+    required this.id,
+    required this.name,
+    required this.prize,
+    required this.players,
+    required this.maxPlayers,
+    required this.startTime,
+    required this.rules,
+  });
+
+  Tournament copyWith({int? players}) {
+    return Tournament(
+      id: id,
+      name: name,
+      prize: prize,
+      players: players ?? this.players,
+      maxPlayers: maxPlayers,
+      startTime: startTime,
+      rules: rules,
+    );
+  }
+
+  String get timeLeft {
+    final now = DateTime.now();
+    if (startTime.isBefore(now)) return 'Started';
+
+    final diff = startTime.difference(now);
+    if (diff.inDays > 0) return '${diff.inDays} days';
+    if (diff.inHours > 0) return '${diff.inHours} hours';
+    return '${diff.inMinutes} min';
+  }
+}
+
+class TournamentRules {
+  final int rounds;
+  final int winCondition;
+  final String emergencyRules;
+
+  TournamentRules({
+    required this.rounds,
+    required this.winCondition,
+    required this.emergencyRules,
+  });
+}
+
+class Coupon {
+  final String id;
+  final String code;
+  final int value;
+  final DateTime expiry;
+  final String condition;
+  final bool isUsed;
+
+  Coupon({
+    required this.id,
+    required this.code,
+    required this.value,
+    required this.expiry,
+    required this.condition,
+    required this.isUsed,
+  });
+
+  Coupon copyWith({bool? isUsed}) {
+    return Coupon(
+      id: id,
+      code: code,
+      value: value,
+      expiry: expiry,
+      condition: condition,
+      isUsed: isUsed ?? this.isUsed,
+    );
+  }
+
+  bool get isValid => !isUsed && expiry.isAfter(DateTime.now());
+}
+
+class GameState {
+  final GameStatus status;
+  final int score;
+  final int opponentScore;
+  final int timeLeft;
+
+  GameState({
+    required this.status,
+    required this.score,
+    required this.opponentScore,
+    required this.timeLeft,
+  });
+
+  GameState copyWith({
+    GameStatus? status,
+    int? score,
+    int? opponentScore,
+    int? timeLeft,
+  }) {
+    return GameState(
+      status: status ?? this.status,
+      score: score ?? this.score,
+      opponentScore: opponentScore ?? this.opponentScore,
+      timeLeft: timeLeft ?? this.timeLeft,
+    );
+  }
+}
+
+enum GameStatus { lobby, playing, won, lost }
+
+// Main Navigation
+class MainNavigationScreen extends StatefulWidget {
+  const MainNavigationScreen({super.key});
+
+  @override
+  State<MainNavigationScreen> createState() => _MainNavigationScreenState();
+}
+
+class _MainNavigationScreenState extends State<MainNavigationScreen> {
+  int _selectedIndex = 0;
+
+  static final List<Widget> _widgetOptions = [
+    const HomeScreen(),
+    const TournamentsScreen(),
+    const ProfileScreen(),
+    const SettingsScreen(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: _widgetOptions.elementAt(_selectedIndex),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+            )
+          ],
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+          type: BottomNavigationBarType.fixed,
+          selectedFontSize: 12,
+          unselectedFontSize: 12,
+          selectedItemColor: Theme.of(context).colorScheme.secondary,
+          unselectedItemColor: Colors.grey,
+          items: [
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.home),
+              label: AppLocalizations.of(context, 'home'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.emoji_events),
+              label: AppLocalizations.of(context, 'tournaments'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.person),
+              label: AppLocalizations.of(context, 'profile'),
+            ),
+            BottomNavigationBarItem(
+              icon: const Icon(Icons.settings),
+              label: AppLocalizations.of(context, 'settings'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Home Screen
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context, 'title')),
+        actions: [
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
+          IconButton(
+            icon: const Icon(Icons.account_balance_wallet),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const WalletScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildFeaturedTournament(context),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'live_tournaments'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          const TournamentList(),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'events'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 12),
+          _buildEventsSection(),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const GameScreen()),
+              );
+            },
+            child: Text(AppLocalizations.of(context, 'play')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeaturedTournament(BuildContext context) {
+    final tournament =
+        Provider.of<TournamentProvider>(context).tournaments.first;
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF0A2E36).withOpacity(0.9),
+              const Color(0xFFD4AF37).withOpacity(0.7),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                tournament.name,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.emoji_events, color: Colors.amber),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${tournament.prize} ${AppLocalizations.of(context, 'balance')}',
+                    style: const TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              LinearProgressIndicator(
+                value: tournament.players / tournament.maxPlayers,
+                backgroundColor: Colors.white24,
+                color: Colors.white,
+                minHeight: 8,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${tournament.players}/${tournament.maxPlayers} ${AppLocalizations.of(context, 'players')}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                  Text(
+                    '${AppLocalizations.of(context, 'starts_in')}: ${tournament.timeLeft}',
+                    style: const TextStyle(color: Colors.white70),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    Provider.of<TournamentProvider>(
+                      context,
+                      listen: false,
+                    ).joinTournament(tournament.id);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF0A2E36),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context, 'join'),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEventsSection() {
+    return SizedBox(
+      height: 180,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildEventCard('رمضان كريم', 'احصل على 500 نقطة مجانًا', 'assets/ramadan.jpg'),
+          _buildEventCard('عودة المدارس', 'خصم 20% على جميع المشتريات', 'assets/school.jpg'),
+          _buildEventCard('عيد الأضحى', 'جوائز خاصة بقيمة 10,000 نقطة', 'assets/eid.jpg'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventCard(String title, String description, String image) {
+    return Container(
+      width: 280,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        image: DecorationImage(
+          image: AssetImage(image),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          gradient: LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [Colors.black.withOpacity(0.8), Colors.transparent],
+          ),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              description,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Tournament List
+class TournamentList extends StatelessWidget {
+  const TournamentList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final tournaments = Provider.of<TournamentProvider>(context).tournaments;
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: tournaments.length,
+      itemBuilder: (context, index) {
+        final tournament = tournaments[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(16),
+            leading: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF0A2E36).withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.emoji_events,
+                size: 30,
+                color: Color(0xFFD4AF37),
+              ),
+            ),
+            title: Text(
+              tournament.name,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  '${tournament.prize} ${AppLocalizations.of(context, 'balance')}',
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${AppLocalizations.of(context, 'players')}: ${tournament.players}/${tournament.maxPlayers}',
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${AppLocalizations.of(context, 'starts_in')}: ${tournament.timeLeft}',
+                ),
+              ],
+            ),
+            trailing: ElevatedButton(
+              onPressed: () {
+                Provider.of<TournamentProvider>(
+                  context,
+                  listen: false,
+                ).joinTournament(tournament.id);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0A2E36),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(AppLocalizations.of(context, 'join')),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Tournaments Screen
+class TournamentsScreen extends StatelessWidget {
+  const TournamentsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context, 'tournaments'))),
+      body: const TournamentList(),
+    );
+  }
+}
+
+// Profile Screen
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).user;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context, 'profile'))),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildProfileHeader(user, context),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'statistics'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          _buildStatisticsSection(user, context),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'prizes'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          _buildPrizesSection(),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'customize'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          _buildCustomizationSection(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader(User user, BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: const Color(0xFFD4AF37),
+                      width: 3,
+                    ),
+                  ),
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/avatar.png',
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                if (user.frame.isNotEmpty)
+                  Positioned.fill(
+                    child: Image.asset(
+                      user.frame,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    user.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${AppLocalizations.of(context, 'global_rank')}: #${user.rank}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.account_balance_wallet, color: Color(0xFFD4AF37)),
+                      const SizedBox(width: 8),
+                      Text(
+                        '${user.balance} ${AppLocalizations.of(context, 'balance')}',
+                        style: const TextStyle(fontSize: 18),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatisticsSection(User user, BuildContext context) {
+    final winRatio = user.winRatio;
+
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${AppLocalizations.of(context, 'win_ratio')}: ${(winRatio * 100).toStringAsFixed(1)}%',
+                  style: const TextStyle(fontSize: 18),
+                ),
+                RatingBarIndicator(
+                  rating: winRatio * 5,
+                  itemBuilder: (context, index) => const Icon(Icons.star, color: Colors.amber),
+                  itemCount: 5,
+                  itemSize: 20.0,
+                  direction: Axis.horizontal,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              child: charts.BarChart(
+                [
+                  charts.Series<OrdinalSales, String>(
+                    id: 'Stats',
+                    colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+                    domainFn: (OrdinalSales sales, _) => sales.year,
+                    measureFn: (OrdinalSales sales, _) => sales.sales,
+                    data: [
+                      OrdinalSales('Wins', user.wins),
+                      OrdinalSales('Losses', user.losses),
+                    ],
+                  ),
+                ],
+                animate: true,
+                vertical: false,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrizesSection() {
+    return SizedBox(
+      height: 180,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildPrizeCard('سيارة BMW', 'assets/car.jpg'),
+          _buildPrizeCard('شهادة ذهب', 'assets/gold.jpg'),
+          _buildPrizeCard('آيفون 14', 'assets/iphone.jpg'),
+          _buildPrizeCard('رحلة إلى دبي', 'assets/dubai.jpg'),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPrizeCard(String title, String image) {
+    return Container(
+      width: 160,
+      margin: const EdgeInsets.only(right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 6,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+            child: Image.asset(
+              image,
+              height: 120,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCustomizationSection() {
+    return GridView.count(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 2,
+      crossAxisSpacing: 16,
+      mainAxisSpacing: 16,
+      childAspectRatio: 0.9,
+      children: [
+        _buildCustomizationOption('خلفية زرقاء', 'assets/blue_bg.jpg'),
+        _buildCustomizationOption('خلفية حمراء', 'assets/red_bg.jpg'),
+        _buildCustomizationOption('إطار ذهبي', 'assets/gold_frame.png'),
+        _buildCustomizationOption('إطار فضي', 'assets/silver_frame.png'),
+      ],
+    );
+  }
+
+  Widget _buildCustomizationOption(String title, String image) {
+    return GestureDetector(
+      onTap: () {},
+      child: Column(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: AssetImage(image),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 14),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Settings Screen
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).user;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context, 'settings'))),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          _buildSettingsTile(
+            context,
+            Icons.language,
+            AppLocalizations.of(context, 'language'),
+            user.language == 'ar'
+                ? AppLocalizations.of(context, 'arabic')
+                : AppLocalizations.of(context, 'english'),
+            () => _showLanguageDialog(context),
+          ),
+          _buildSettingsTile(
+            context,
+            Icons.color_lens,
+            AppLocalizations.of(context, 'theme'),
+            user.themeMode == 'light'
+                ? AppLocalizations.of(context, 'light')
+                : user.themeMode == 'dark'
+                    ? AppLocalizations.of(context, 'dark')
+                    : AppLocalizations.of(context, 'system'),
+            () => _showThemeDialog(context),
+          ),
+          _buildSwitchTile(
+            Icons.notifications,
+            AppLocalizations.of(context, 'notifications'),
+            true,
+          ),
+          _buildSettingsTile(
+            context,
+            Icons.security,
+            AppLocalizations.of(context, 'security'),
+            '',
+            () {},
+          ),
+          _buildSettingsTile(
+            context,
+            Icons.admin_panel_settings,
+            AppLocalizations.of(context, 'admin_panel'),
+            '',
+            () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AdminScreen()),
+              );
+            },
+          ),
+          _buildSettingsTile(
+            context,
+            Icons.logout,
+            AppLocalizations.of(context, 'logout'),
+            '',
+            () {},
+            isLogout: true,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsTile(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String subtitle,
+    VoidCallback onTap, {
+    bool isLogout = false,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: isLogout ? Colors.red : Theme.of(context).colorScheme.secondary),
+        title: Text(title),
+        subtitle: subtitle.isNotEmpty ? Text(subtitle) : null,
+        trailing: isLogout ? null : const Icon(Icons.arrow_forward_ios),
+        onTap: onTap,
+        tileColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSwitchTile(IconData icon, String title, bool value) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: ListTile(
+        leading: Icon(icon, color: Theme.of(context).colorScheme.secondary),
+        title: Text(title),
+        trailing: Switch(value: value, onChanged: (v) {}),
+        tileColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context) {
+    final languageProvider = Provider.of<LanguageProvider>(
+      context,
+      listen: false,
+    );
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context, 'language')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context, 'arabic')),
+                leading: const Icon(Icons.language),
+                onTap: () {
+                  languageProvider.setLocale(const Locale('ar', ''));
+                  userProvider.updateSettings(
+                    'ar',
+                    userProvider.user.themeMode,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context, 'english')),
+                leading: const Icon(Icons.language),
+                onTap: () {
+                  languageProvider.setLocale(const Locale('en', ''));
+                  userProvider.updateSettings(
+                    'en',
+                    userProvider.user.themeMode,
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showThemeDialog(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context, 'theme')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(AppLocalizations.of(context, 'light')),
+                leading: const Icon(Icons.light_mode),
+                onTap: () {
+                  themeProvider.themeMode = ThemeMode.light;
+                  userProvider.updateSettings(
+                    userProvider.user.language,
+                    'light',
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context, 'dark')),
+                leading: const Icon(Icons.dark_mode),
+                onTap: () {
+                  themeProvider.themeMode = ThemeMode.dark;
+                  userProvider.updateSettings(
+                    userProvider.user.language,
+                    'dark',
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                title: Text(AppLocalizations.of(context, 'system')),
+                leading: const Icon(Icons.settings_suggest),
+                onTap: () {
+                  themeProvider.themeMode = ThemeMode.system;
+                  userProvider.updateSettings(
+                    userProvider.user.language,
+                    'system',
+                  );
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// Admin Screen
+class AdminScreen extends StatelessWidget {
+  const AdminScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context, 'admin_panel')),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: AppLocalizations.of(context, 'create_tournament')),
+              Tab(text: AppLocalizations.of(context, 'coupons')),
+              Tab(text: AppLocalizations.of(context, 'analytics')),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            const TournamentCreationScreen(),
+            CouponManagementScreen(),
+            AnalyticsScreen(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Tournament Creation Screen
+class TournamentCreationScreen extends StatefulWidget {
+  const TournamentCreationScreen({super.key});
+
+  @override
+  State<TournamentCreationScreen> createState() =>
+      _TournamentCreationScreenState();
+}
+
+class _TournamentCreationScreenState extends State<TournamentCreationScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  int _prize = 1000;
+  int _maxPlayers = 32;
+  int _rounds = 3;
+  int _winCondition = 100;
+  DateTime _startDate = DateTime.now().add(const Duration(days: 1));
+  String _emergencyRules = 'إلغاء البطولة عند اكتشاف الغش';
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextFormField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context, 'tournament_name'),
+                border: const OutlineInputBorder(),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter tournament name';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            Text('${AppLocalizations.of(context, 'prize')}: $_prize'),
+            Slider(
+              value: _prize.toDouble(),
+              min: 500,
+              max: 10000,
+              divisions: 19,
+              label: '$_prize',
+              onChanged: (value) {
+                setState(() {
+                  _prize = value.round();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '${AppLocalizations.of(context, 'max_players')}: $_maxPlayers',
+            ),
+            Slider(
+              value: _maxPlayers.toDouble(),
+              min: 2,
+              max: 100,
+              divisions: 49,
+              label: '$_maxPlayers',
+              onChanged: (value) {
+                setState(() {
+                  _maxPlayers = value.round();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text('${AppLocalizations.of(context, 'rounds')}: $_rounds'),
+            Slider(
+              value: _rounds.toDouble(),
+              min: 1,
+              max: 10,
+              divisions: 9,
+              label: '$_rounds',
+              onChanged: (value) {
+                setState(() {
+                  _rounds = value.round();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '${AppLocalizations.of(context, 'win_condition')}: $_winCondition',
+            ),
+            Slider(
+              value: _winCondition.toDouble(),
+              min: 50,
+              max: 200,
+              divisions: 30,
+              label: '$_winCondition',
+              onChanged: (value) {
+                setState(() {
+                  _winCondition = value.round();
+                });
+              },
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              title: Text(
+                '${AppLocalizations.of(context, 'start_date')}: ${DateFormat.yMd().format(_startDate)}',
+              ),
+              trailing: const Icon(Icons.calendar_today),
+              onTap: () async {
+                final pickedDate = await showDatePicker(
+                  context: context,
+                  initialDate: _startDate,
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (pickedDate != null) {
+                  setState(() {
+                    _startDate = pickedDate;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              initialValue: _emergencyRules,
+              decoration: InputDecoration(
+                labelText: AppLocalizations.of(context, 'emergency_rules'),
+                border: const OutlineInputBorder(),
+              ),
+              maxLines: 3,
+              onChanged: (value) {
+                _emergencyRules = value;
+              },
+            ),
+            const SizedBox(height: 24),
+            Center(
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    final tournament = Tournament(
+                      id: 't${DateTime.now().millisecondsSinceEpoch}',
+                      name: _nameController.text,
+                      prize: _prize,
+                      players: 0,
+                      maxPlayers: _maxPlayers,
+                      startTime: _startDate,
+                      rules: TournamentRules(
+                        rounds: _rounds,
+                        winCondition: _winCondition,
+                        emergencyRules: _emergencyRules,
+                      ),
+                    );
+
+                    Provider.of<TournamentProvider>(
+                      context,
+                      listen: false,
+                    ).createTournament(tournament);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          '${AppLocalizations.of(context, 'tournament_created')}!',
+                        ),
+                      ),
+                    );
+
+                    Navigator.pop(context);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                ),
+                child: Text(AppLocalizations.of(context, 'create_tournament')),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Coupon Management Screen
+class CouponManagementScreen extends StatelessWidget {
+  CouponManagementScreen({super.key});
+
+  final _couponController = TextEditingController();
+  final _valueController = TextEditingController(text: '500');
+  final _conditionController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    final coupons = Provider.of<CouponProvider>(context).coupons;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  Text(
+                    AppLocalizations.of(context, 'generate_coupon'),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _couponController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context, 'coupon_code'),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _valueController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context, 'value'),
+                      border: const OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _conditionController,
+                    decoration: InputDecoration(
+                      labelText: AppLocalizations.of(context, 'condition'),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      final code = _couponController.text;
+                      final value = int.tryParse(_valueController.text) ?? 500;
+                      final condition = _conditionController.text;
+
+                      Provider.of<CouponProvider>(
+                        context,
+                        listen: false,
+                      ).generateCoupon(
+                        code,
+                        value,
+                        const Duration(days: 7),
+                        condition,
+                      );
+
+                      _couponController.clear();
+                      _valueController.clear();
+                      _conditionController.clear();
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            '${AppLocalizations.of(context, 'coupon_generated')}!',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(AppLocalizations.of(context, 'generate')),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'active_coupons'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          if (coupons.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(AppLocalizations.of(context, 'no_active_coupons')),
+            ),
+          ...coupons.map(
+            (coupon) => Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                title: Text(
+                  coupon.code,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(
+                      '${AppLocalizations.of(context, 'value')}: ${coupon.value}',
+                    ),
+                    Text(
+                      '${AppLocalizations.of(context, 'expiry')}: ${DateFormat.yMd().format(coupon.expiry)}',
+                    ),
+                    if (coupon.condition.isNotEmpty)
+                      Text(
+                        '${AppLocalizations.of(context, 'condition')}: ${coupon.condition}',
+                      ),
+                  ],
+                ),
+                trailing: IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () {},
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Analytics Screen
+class AnalyticsScreen extends StatelessWidget {
+  const AnalyticsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'User Engagement',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 300,
+            child: charts.LineChart([
+              charts.Series<LinearSales, int>(
+                id: 'Engagement',
+                colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
+                domainFn: (LinearSales sales, _) => sales.day,
+                measureFn: (LinearSales sales, _) => sales.sales,
+                data: [
+                  LinearSales(1, 100),
+                  LinearSales(2, 150),
+                  LinearSales(3, 300),
+                  LinearSales(4, 450),
+                  LinearSales(5, 200),
+                  LinearSales(6, 600),
+                  LinearSales(7, 800),
+                ],
+              ),
+            ], animate: true),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Game Profitability',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 300,
+            child: charts.PieChart(
+              [
+                charts.Series<PieData, String>(
+                  id: 'Profitability',
+                  domainFn: (PieData data, _) => data.label,
+                  measureFn: (PieData data, _) => data.value,
+                  data: [
+                    PieData('Baloot', 45),
+                    PieData('Poker', 25),
+                    PieData('Blackjack', 15),
+                    PieData('Others', 15),
+                  ],
+                  labelAccessorFn:
+                      (PieData row, _) => '${row.label}: ${row.value}%',
+                ),
+              ],
+              animate: true,
+              defaultRenderer: charts.ArcRendererConfig(
+                arcRendererDecorators: [charts.ArcLabelDecorator()],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text('Coupon Impact', style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 300,
+            child: charts.BarChart(
+              [
+                charts.Series<OrdinalSales, String>(
+                  id: 'Impact',
+                  colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+                  domainFn: (OrdinalSales sales, _) => sales.year,
+                  measureFn: (OrdinalSales sales, _) => sales.sales,
+                  data: [
+                    OrdinalSales('Without\nCoupon', 350),
+                    OrdinalSales('With\nCoupon', 780),
+                  ],
+                ),
+              ],
+              animate: true,
+              vertical: false,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Game Screen
+class GameScreen extends StatelessWidget {
+  const GameScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Consumer<GameProvider>(
+        builder: (context, gameProvider, child) {
+          switch (gameProvider.gameState.status) {
+            case GameStatus.lobby:
+              return _buildLobbyScreen(context);
+            case GameStatus.playing:
+              return _buildGameScreen(context);
+            case GameStatus.won:
+              return _buildResultScreen(context, true);
+            case GameStatus.lost:
+              return _buildResultScreen(context, false);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildLobbyScreen(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            const Color(0xFF0A2E36).withOpacity(0.9),
+            const Color(0xFF1A3E46).withOpacity(0.9),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'جاكارو كينج',
+              style: TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              '${AppLocalizations.of(context, 'matchmaking')}...',
+              style: const TextStyle(fontSize: 24, color: Colors.white70),
+            ),
+            const SizedBox(height: 40),
+            const CircularProgressIndicator(color: Colors.white),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                Provider.of<GameProvider>(context, listen: false).startGame();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFD4AF37),
+                foregroundColor: Colors.black,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context, 'start_game'),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGameScreen(BuildContext context) {
+    final gameState = Provider.of<GameProvider>(context).gameState;
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF0A2E36),
+            Color(0xFF1A3E46),
+          ],
+        ),
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.black26,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    '${AppLocalizations.of(context, 'time')}: ${gameState.timeLeft}s',
+                    style: const TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                ),
+                Text(
+                  '${gameState.score} - ${gameState.opponentScore}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const CircleAvatar(
+                  backgroundImage: AssetImage('assets/opponent.png'),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: GridView.count(
+                crossAxisCount: 4,
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                children: List.generate(16, (index) {
+                  return Card(
+                    color: const Color(0xFFD4AF37),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '${index + 1}',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                FloatingActionButton(
+                  onPressed: () {
+                    Provider.of<GameProvider>(
+                      context,
+                      listen: false,
+                    ).updateScore(10);
+                  },
+                  backgroundColor: const Color(0xFFD4AF37),
+                  child: const Icon(Icons.add, color: Colors.black),
+                ),
+                FloatingActionButton(
+                  onPressed: () {},
+                  backgroundColor: Colors.white24,
+                  child: const Icon(Icons.mic, color: Colors.white),
+                ),
+                FloatingActionButton(
+                  onPressed: () {},
+                  backgroundColor: Colors.white24,
+                  child: const Icon(Icons.music_note, color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultScreen(BuildContext context, bool isWin) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            isWin ? const Color(0xFF0A2E36) : const Color(0xFF4A1C1C),
+            isWin ? const Color(0xFF1A3E46) : const Color(0xFF6A2C2C),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              isWin
+                  ? AppLocalizations.of(context, 'you_win')
+                  : AppLocalizations.of(context, 'you_lose'),
+              style: const TextStyle(
+                fontSize: 48,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            isWin
+                ? Text(
+                    '+500 ${AppLocalizations.of(context, 'balance')}',
+                    style: const TextStyle(fontSize: 24, color: Colors.white),
+                  )
+                : const SizedBox(),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: () {
+                Provider.of<GameProvider>(context, listen: false).startGame();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: isWin ? const Color(0xFFD4AF37) : Colors.white,
+                foregroundColor: isWin ? Colors.black : Colors.red,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 16,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+              ),
+              child: Text(
+                AppLocalizations.of(context, 'play_again'),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                AppLocalizations.of(context, 'back_to_home'),
+                style: const TextStyle(fontSize: 18, color: Colors.white70),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Wallet Screen
+class WalletScreen extends StatelessWidget {
+  const WalletScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context).user;
+    final coupons = Provider.of<CouponProvider>(context).coupons;
+
+    return Scaffold(
+      appBar: AppBar(title: Text(AppLocalizations.of(context, 'wallet'))),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Card(
+            elevation: 4,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    const Color(0xFF0A2E36).withOpacity(0.9),
+                    const Color(0xFFD4AF37).withOpacity(0.7),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  children: [
+                    Text(
+                      AppLocalizations.of(context, 'balance'),
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      '${user.balance}',
+                      style: const TextStyle(
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF0A2E36),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(AppLocalizations.of(context, 'add_funds')),
+                        ),
+                        const SizedBox(width: 16),
+                        OutlinedButton(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.white,
+                            side: const BorderSide(color: Colors.white),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(AppLocalizations.of(context, 'withdraw')),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            AppLocalizations.of(context, 'coupons'),
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 16),
+          if (coupons.isEmpty)
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  AppLocalizations.of(context, 'no_active_coupons'),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ...coupons.map(
+            (coupon) => Card(
+              margin: const EdgeInsets.only(bottom: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: ListTile(
+                title: Text(
+                  coupon.code,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(
+                      '${AppLocalizations.of(context, 'value')}: ${coupon.value}',
+                    ),
+                    Text(
+                      '${AppLocalizations.of(context, 'expiry')}: ${DateFormat.yMd().format(coupon.expiry)}',
+                    ),
+                  ],
+                ),
+                trailing: ElevatedButton(
+                  onPressed: () {
+                    Provider.of<CouponProvider>(
+                      context,
+                      listen: false,
+                    ).redeemCoupon(coupon.id);
+                  },
+                  child: Text(AppLocalizations.of(context, 'redeem')),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// Helper Classes
+class LinearSales {
+  final int day;
+  final int sales;
+
+  LinearSales(this.day, this.sales);
+}
+
+class OrdinalSales {
+  final String year;
+  final int sales;
+
+  OrdinalSales(this.year, this.sales);
+}
+
+class PieData {
+  final String label;
+  final int value;
+
+  PieData(this.label, this.value);
+}
+
+// Global Key for Navigation
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
